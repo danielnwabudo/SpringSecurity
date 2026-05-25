@@ -16,3 +16,4 @@ studentApi/src/main/resources/application.properties
 *.jar
 *.war
 
+/.idea/
