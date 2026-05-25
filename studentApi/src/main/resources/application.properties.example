@@ -1,0 +1,16 @@
+spring.application.name=studentApi
+
+# Database — set real values via environment variables
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/demo}
+spring.datasource.username=${DB_USERNAME:changeme}
+spring.datasource.password=${DB_PASSWORD:changeme}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# JWT — generate with: openssl rand -base64 32
+jwt.secret=${JWT_SECRET:changeme-replace-with-256bit-secret}
+

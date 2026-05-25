@@ -2,6 +2,7 @@ package com.example.studentApi.services;
 
 import com.example.studentApi.entity.Users;
 import com.example.studentApi.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,12 +17,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomUserDetailsService(UserRepository repository) {
         this.repository = repository;
     }
-    //Its ONLY responsibility: load user information from database
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Users user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+        Users user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), List.of());
+        // TODO: An empty authority list (List.of()) means the user has NO granted roles.
+        // This silently breaks any role-based access control you might add later.
+        // Map the user's Role enum to a GrantedAuthority so Spring Security can enforce it.
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
     }
 }

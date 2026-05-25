@@ -7,6 +7,7 @@ import com.example.studentApi.dto.RegisterResponseDto;
 import com.example.studentApi.entity.Users;
 import com.example.studentApi.enums.Role;
 import com.example.studentApi.exception.EmailAlreadyExistsException;
+import com.example.studentApi.exception.InvalidCredentialsException;
 import com.example.studentApi.mapper.UserMapper;
 import com.example.studentApi.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,11 +37,13 @@ public class AuthService {
         Users savedUser = userRepository.save(user);
         return mapper.toResponse(savedUser);
     }
-    public LoginResponseDto login(LoginRequestDto dto){
+    public LoginResponseDto login(LoginRequestDto dto) {
+        // TODO: Raw RuntimeException was used — replace with custom exceptions so GlobalExceptionHandler
+        // can return 401 Unauthorized instead of 500 Internal Server Error.
         Users user = userRepository.findByEmail(dto.email())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-        if(!encoder.matches(dto.password(), user.getPassword())){
-            throw  new RuntimeException("Invalid email or password");
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+        if (!encoder.matches(dto.password(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
         }
         String token = jwtService.generateToken(user.getEmail());
         return new LoginResponseDto(token);

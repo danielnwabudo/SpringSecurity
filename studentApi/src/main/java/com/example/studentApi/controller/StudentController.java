@@ -20,43 +20,53 @@ public class StudentController {
         this.service = service;
     }
 
-    @PostMapping("/studentsApi")
-    public ResponseEntity<StudentResponseDto> createStudent(@Valid @RequestBody StudentRequestDto dto){
+    // TODO: Was mapped to /students/studentsApi — keep paths consistent and RESTful (e.g. POST /students).
+    @PostMapping
+    public ResponseEntity<StudentResponseDto> createStudent(@Valid @RequestBody StudentRequestDto dto) {
         StudentResponseDto responseDto = service.createStudent(dto);
-        return  ResponseEntity.status(201).body(responseDto);
+        return ResponseEntity.status(201).body(responseDto);
     }
 
-    @GetMapping("/students/{id}")
-    public StudentResponseDto findBy_Id(@PathVariable Long id){
-        return service.findByStudentId(id);
+    // TODO: Was mapped to /students/students/{id} — double "students" in the URL is a mistake.
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentResponseDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findByStudentId(id));
     }
+
+    // TODO: @Valid was missing — request body was not validated on update.
     @PutMapping("/{id}")
-    public  ResponseEntity<StudentResponseDto> updatingStudent(@PathVariable Long id, @RequestBody StudentRequestDto dto){
+    public ResponseEntity<StudentResponseDto> updateStudent(@PathVariable Long id, @Valid @RequestBody StudentRequestDto dto) {
         return ResponseEntity.ok(service.updateStudent(id, dto));
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id){
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         service.deleteStudentById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<StudentResponseDto>> findStudents(@RequestParam String prefix){
+    public ResponseEntity<List<StudentResponseDto>> findStudents(@RequestParam String prefix) {
         return ResponseEntity.ok(service.findStudentsByPrefix(prefix));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<StudentResponseDto>> findStudentsNameAndAge(@RequestParam String prefix,
-                                                                           @RequestParam int age){
+    public ResponseEntity<List<StudentResponseDto>> findStudentsByNameAndAge(@RequestParam String prefix,
+                                                                              @RequestParam int age) {
         return ResponseEntity.ok(service.findByNameAndAge(prefix, age));
     }
-    @GetMapping("/getStudent")
-    public ResponseEntity<Page<StudentResponseDto>> pageToDto(@RequestParam int page, @RequestParam int size){
-        return ResponseEntity.ok(service.studentPage(page, size ));
+
+    // TODO: Was mapped to /students/getStudent — prefer /students/page for clarity.
+    @GetMapping("/page")
+    public ResponseEntity<Page<StudentResponseDto>> getStudentsPage(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(service.studentPage(page, size));
     }
 
-    @GetMapping("")
-    public ResponseEntity<Page<StudentResponseDto>> sortingPage(@RequestParam int page, @RequestParam int size, @RequestParam String sortBy){
-        return ResponseEntity.ok(service.sortPage(page, size, sortBy ));
+    // TODO: GET /students with query params is actually a reasonable REST pattern for paginated/sorted listing.
+    @GetMapping
+    public ResponseEntity<Page<StudentResponseDto>> getSortedPage(@RequestParam int page,
+                                                                   @RequestParam int size,
+                                                                   @RequestParam String sortBy) {
+        return ResponseEntity.ok(service.sortPage(page, size, sortBy));
     }
 }

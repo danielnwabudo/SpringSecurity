@@ -1,6 +1,5 @@
 package com.example.studentApi.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,10 +14,14 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // TODO: Add @Column(nullable = false) to enforce the constraint at the DB level too.
+    @Column(nullable = false)
     private String title;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    @JsonBackReference
+    // TODO: @JsonBackReference / @JsonManagedReference are useful for avoiding serialisation cycles,
+    // but consider using DTOs for serialisation instead of exposing entities directly via Jackson.
+    // This keeps your API contract decoupled from your database model.
     private Student student;
 }
