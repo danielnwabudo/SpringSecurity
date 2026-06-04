@@ -1,0 +1,19 @@
+# Maven
+target/
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# TODO: application.properties should NOT contain real credentials.
+# Use environment variables and only commit a template (application.properties.example) with placeholder values.
+# If secrets are already committed, rotate them immediately.
+studentApi/src/main/resources/application.properties
+
+# Compiled & packaged
+*.jar
+*.war
+
+/.idea/
